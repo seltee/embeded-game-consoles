@@ -10,8 +10,9 @@
 #include "sdcard.h"
 
 bool isRenderingInProcess = false;
-unsigned short int lBuffer1[320], lBuffer2[320];
+unsigned short int lBuffer1[320 + 14], lBuffer2[320 + 14];
 int screenDMAChannel = -1;
+struct R12Context *coreR12Context = NULL;
 
 static inline void setDataSending()
 {
@@ -252,29 +253,31 @@ void _displayRenderR12CoreTask()
 
     setDataSending();
 
-    R12FillLine(0, lBuffer1);
-    displaySendDataDMA((unsigned char *)lBuffer1, 640);
+    R12FillLine(coreR12Context, 0, lBuffer1 + 7);
+    displaySendDataDMA((unsigned char *)(lBuffer1 + 7), 640);
     unsigned short *cBuffer = lBuffer1;
 
     for (int line = 1; line < 240; line++)
     {
         cBuffer = cBuffer == lBuffer1 ? lBuffer2 : lBuffer1; // Switch buffer
-        R12FillLine(line, cBuffer);
-        displaySendDataDMA((unsigned char *)cBuffer, 640);
+        R12FillLine(coreR12Context, line, cBuffer + 7);
+        displaySendDataDMA((unsigned char *)(cBuffer + 7), 640);
     }
 
     dma_channel_wait_for_finish_blocking(screenDMAChannel);
     isRenderingInProcess = false;
 }
 
-void displayRenderR12()
+void displayRenderR12(struct R12Context *context)
 {
     while (isRenderingInProcess)
         sleep_us(1);
+
     SDCardSwitchOffCS();
     gpio_put(GPIO_SCREEN_CS, 0);
-    R12PrepareNewFrame();
+    R12PrepareNewFrame(context);
 
+    coreR12Context = context;
     isRenderingInProcess = true;
     multicore_reset_core1();
     multicore_launch_core1(_displayRenderR12CoreTask);

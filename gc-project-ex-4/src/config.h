@@ -1,12 +1,12 @@
 #pragma once
 
 // SETTINGS
-#define CLOCK_SPEED 200000 // khz
+#define CLOCK_SPEED 276000 // khz
 
 // GPIO
 // Display SPI
 #define SPI0_BAUD_RATE (CLOCK_SPEED * 1000)
- 
+
 #define GPIO_SPI0_SCK 2
 #define GPIO_SPI0_MOSI 3
 #define GPIO_SPI0_MISO 4
@@ -23,6 +23,10 @@
 // Input
 #define GPIO_INPUT_AXIS_X 26 // ADC 0
 #define GPIO_INPUT_AXIS_Y 27 // ADC 1
+
+#define GPIO_INPUT_LOAD 11
+#define GPIO_INPUT_SCK 14
+#define GPIO_INPUT_IN 15
 
 // Sound
 #define GPIO_SOUND_WS 7

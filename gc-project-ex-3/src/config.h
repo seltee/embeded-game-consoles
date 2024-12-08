@@ -1,7 +1,7 @@
 #pragma once
 
 // SETTINGS
-#define CLOCK_SPEED 200000 // khz
+#define CLOCK_SPEED 276000 // khz
 
 // GPIO
 // Display SPI

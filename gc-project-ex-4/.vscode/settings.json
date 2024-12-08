@@ -44,6 +44,10 @@
         "input.h": "c",
         "sdcard.h": "c",
         "display.h": "c",
-        "spi.h": "c"
+        "spi.h": "c",
+        "r12.h": "c",
+        "stdio.h": "c",
+        "spritetileset.h": "c",
+        "config.h": "c"
     }
 }
