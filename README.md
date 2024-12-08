@@ -1,4 +1,4 @@
-# Materials for ConsoleCraft YuoTube show
+# Materials for ConsoleCraft YouTube show
 
 This repository contains materials created during the episodes of ConsoleCraft show where I create a homebrew game console with deep dive into the process.
 
