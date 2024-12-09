@@ -718,46 +718,62 @@ void R12FillLineMatrix(int line, struct R12Matrix *matrix, unsigned short *pOutB
 
         if (bitsPerPixel == 8 && px < 0)
         {
-            data += -px;
+            if (!(flags & R12FlagHMirror))
+                data += -px;
             finalWidth += px;
             px = 0;
-            if (flags & R12FlagHMirror)
-                data += (finalWidth - spriteWidth);
         }
         if (bitsPerPixel == 4 && px < 0)
         {
             int c = ((-px) >> 1) << 1;
-            data += c >> 1;
+            if (!(flags & R12FlagHMirror))
+                data += c >> 1;
             finalWidth -= c;
             px += c;
-            if (flags & R12FlagHMirror)
-                data += (finalWidth - spriteWidth);
         }
         if (bitsPerPixel == 2 && px < 0)
         {
             int c = ((-px) >> 2) << 2;
-            data += c >> 2;
+            if (!(flags & R12FlagHMirror))
+                data += c >> 2;
             finalWidth -= c;
             px += c;
             if (flags & R12FlagHMirror)
-                data += (finalWidth - spriteWidth);
+                data += (finalWidth - spriteWidth) >> 2;
         }
         if (bitsPerPixel == 1 && px < 0)
         {
             int c = ((-px) >> 3) << 3;
-            data += c >> 3;
+            if (!(flags & R12FlagHMirror))
+                data += c >> 3;
             finalWidth -= c;
             px += c;
-            if (flags & R12FlagHMirror)
-                data += (finalWidth - spriteWidth);
         }
         if (px >= 320)
             continue;
-        if (px + finalWidth > 320)
+        if (bitsPerPixel == 8 && px + finalWidth > 320)
         {
             finalWidth = 320 - px;
             if (flags & R12FlagHMirror)
                 data += (spriteWidth - finalWidth);
+        }
+        if (bitsPerPixel == 4 && px + finalWidth > 320)
+        {
+            finalWidth = 320 - px;
+            if (flags & R12FlagHMirror)
+                data += (spriteWidth - finalWidth) >> 1;
+        }
+        if (bitsPerPixel == 2 && px + finalWidth > 320)
+        {
+            finalWidth = 320 - px;
+            if (flags & R12FlagHMirror)
+                data += (spriteWidth - finalWidth) >> 2;
+        }
+        if (bitsPerPixel == 1 && px + finalWidth > 320)
+        {
+            finalWidth = 320 - px;
+            if (flags & R12FlagHMirror)
+                data += (spriteWidth - finalWidth) >> 3;
         }
         if (finalWidth <= 0)
             continue;
@@ -853,37 +869,46 @@ bool R12AddSprite(
     // Cropping by screen on width
     if (bitsPerPixel == 8 && x < 0)
     {
-        data += -x;
+        if (!(flags & R12FlagHMirror))
+            data += -x;
         finalWidth += x;
         x = 0;
-        if (flags & R12FlagHMirror)
-            data += (finalWidth - width);
     }
     if (bitsPerPixel == 4 && x < 0)
     {
         int c = ((-x) >> 1) << 1;
-        data += c >> 1;
+        if (!(flags & R12FlagHMirror))
+            data += c >> 1;
         finalWidth -= c;
         x += c;
-        if (flags & R12FlagHMirror)
-            data += (finalWidth - width);
     }
     if (bitsPerPixel == 2 && x < 0)
     {
         int c = ((-x) >> 2) << 2;
-        data += c >> 2;
+        if (!(flags & R12FlagHMirror))
+            data += c >> 2;
         finalWidth -= c;
         x += c;
-        if (flags & R12FlagHMirror)
-            data += (finalWidth - width);
     }
     if (x >= 320)
         return false;
-    if (x + finalWidth > 320)
+    if (bitsPerPixel == 8 && x + finalWidth > 320)
     {
         finalWidth = 320 - x;
         if (flags & R12FlagHMirror)
             data += (width - finalWidth);
+    }
+    if (bitsPerPixel == 4 && x + finalWidth > 320)
+    {
+        finalWidth = 320 - x;
+        if (flags & R12FlagHMirror)
+            data += (width - finalWidth) >> 1;
+    }
+    if (bitsPerPixel == 2 && x + finalWidth > 320)
+    {
+        finalWidth = 320 - x;
+        if (flags & R12FlagHMirror)
+            data += (width - finalWidth) >> 2;
     }
     if (finalWidth <= 0)
         return false;
@@ -960,11 +985,10 @@ bool R12AddSpriteMask(
     if (x < 0)
     {
         int c = ((-x) >> 3) << 3;
-        data += c >> 3;
+        if (!(flags & R12FlagHMirror))
+            data += c >> 3;
         finalWidth -= c;
         x += c;
-        if (flags & R12FlagHMirror)
-            data += (finalWidth - width);
     }
     if (x >= 320)
         return false;
@@ -972,7 +996,7 @@ bool R12AddSpriteMask(
     {
         finalWidth = 320 - x;
         if (flags & R12FlagHMirror)
-            data += (width - finalWidth);
+            data += (width - finalWidth) >> 3;
     }
     if (finalWidth <= 0)
         return false;

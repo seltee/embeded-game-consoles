@@ -60,7 +60,7 @@ struct R12SpritePalette
 
     unsigned char startY;
     unsigned char endY;
-    unsigned short startX;
+    short startX;
 
     unsigned short width;
     unsigned char height;
